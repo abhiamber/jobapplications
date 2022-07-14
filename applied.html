@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Database</title>
+    <link rel="stylesheet" href="commonStyles.css" />
+  </head>
+
+  <body>
+    <div id="links">
+      <div><a href="index.html">Home</a></div>
+      <div><a href="applied.html">Applied Jobs</a></div>
+      <div><a href="bookmark.html">Bookmarks</a></div>
+    </div>
+    <div id="redu">
+      <select id="sortbyNames">
+        <option value="Sort by Names">Sort by Names</option>
+        <option value="Ascending">Ascending</option>
+        <option value="Descending">Descending</option>
+      </select>
+      <select id="sortBySalary">
+        <option value="Sort by Salary">Sort by Salary</option>
+        <option value="High to Low">High to Low</option>
+        <option value="Low to High">Low to High</option>
+      </select>
+      <select id="filterByRoles">
+        <option value="Filter by Roles">Filter by Roles</option>
+        <option value="FSD">FSD</option>
+        <option value="Backend">Backend</option>
+        <option value="Frontend">Frontend</option>
+      </select>
+    </div>
+    <main>
+      <table>
+        <thead>
+          <th>Name</th>
+          <th>Email</th>
+          <th>Job applied</th>
+          <th>Salary expected</th>
+          <th>Add to bookmark</th>
+        </thead>
+        <tbody id="body">
+          <!-- Append your output to tbody -->
+        </tbody>
+      </table>
+    </main>
+  </body>
+  <script>
+    //you need to code
+
+    let jobapplication = JSON.parse(localStorage.getItem("objData")) || [];
+    let BookMarks = JSON.parse(localStorage.getItem("Bokkmarksdata")) || [];
+    appliedDetails(jobapplication);
+
+    document.querySelector("#sortbyNames").addEventListener("change", sortByName);
+
+    // ********sorting by names***********************
+    function sortByName() {
+      let selected = document.querySelector("#sortbyNames").value;
+
+      if (selected == "Ascending") {
+        jobapplication.sort(function (a, b) {
+          let x=a.names.toUpperCase()
+          let y=b.names.toUpperCase()
+          if (x > y) return 1;
+          if (x< y) return -1;
+          return 0;
+        });
+        appliedDetails(jobapplication);       
+      }
+
+      if(selected=="Descending"){
+        jobapplication.sort(function (a, b) {
+          let x=a.names.toUpperCase()
+          let y=b.names.toUpperCase()
+          if (x > y) return -1;
+          if (x< y) return 1;
+          return 0;
+        });
+        appliedDetails(jobapplication)
+
+      }     
+    }    // sorting by name done above from here
+
+    // ****************sorting by salary*******************************
+    document.querySelector("#sortBySalary").addEventListener("change", Salary);
+
+    function Salary() {
+      let selected = document.querySelector("#sortBySalary").value;
+
+      if (selected == "Low to High") {
+        jobapplication.sort(function (a, b) {
+          
+          if (+(a.Salary )> +(b.Salary)) return 1;
+          if (+(a.Salary)< +(b.Salary)) return -1;
+          return 0;
+        });
+        appliedDetails(jobapplication);       
+      }
+
+      if(selected=="High to Low"){
+        jobapplication.sort(function (a, b) {
+        
+          if (+(a.Salary) > +(b.Salary)) return -1;
+          if (+(a.Salary)< +(b.Salary)) return 1;
+          return 0;
+        });
+        appliedDetails(jobapplication)
+
+      }     
+    }
+
+   // ****************sorting by salary done above*******************************
+
+// ***************filter by roles*************
+document.querySelector("#filterByRoles").addEventListener("change", roles);
+
+function roles(){
+  let role=document.querySelector("#filterByRoles").value
+
+  let filterrole=jobapplication.filter(function(elem){
+        
+    return elem.roles==role
+
+  })
+  appliedDetails(filterrole)
+
+}
+
+// *********************************** filter by roles parts done********************
+
+
+   
+
+    function appliedDetails(jobapplication) {
+      document.querySelector("tbody").innerHTML=""
+      jobapplication.map(function (elem) {
+        let tr = document.createElement("tr");
+        let td1 = document.createElement("td");
+        td1.innerText = elem.names;
+        let td2 = document.createElement("td");
+        td2.innerText = elem.emails;
+        let td3 = document.createElement("td");
+        td3.innerText = elem.roles;
+        let td4 = document.createElement("td");
+        td4.innerText = elem.Salary;
+        let td5 = document.createElement("td");
+        td5.innerText = "BookMarks";
+        td5.addEventListener("click", function () {
+          addtobookmarks(elem);
+        });
+        td5.style.backgroundColor = "teal";
+        td5.style.cursor = "pointer";
+        tr.append(td1, td2, td3, td4, td5);
+        document.querySelector("tbody").append(tr);
+      });
+    }
+
+    function addtobookmarks(elem) {
+      BookMarks.push(elem);
+      localStorage.setItem("Bokkmarksdata", JSON.stringify(BookMarks));
+
+      // console.log(elem)
+    }
+  </script>
+</html>
